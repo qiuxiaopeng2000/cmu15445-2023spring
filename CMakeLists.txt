@@ -4,6 +4,7 @@ set(BUILD_SHARED_LIBS OFF) # We expect external libraries to be linked staticall
 set(CMAKE_CXX_STANDARD 17) # Compile as C++17.
 set(CMAKE_CXX_STANDARD_REQUIRED ON) # Require C++17 support.
 
+
 project(BusTub
         VERSION 2023.1
         DESCRIPTION "The BusTub Relational Database Management System (Educational) @ https://github.com/cmu-db/bustub"

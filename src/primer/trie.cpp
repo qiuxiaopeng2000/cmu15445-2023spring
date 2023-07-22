@@ -12,6 +12,20 @@ auto Trie::Get(std::string_view key) const -> const T * {
   // nullptr. After you find the node, you should use `dynamic_cast` to cast it to `const TrieNodeWithValue<T> *`. If
   // dynamic_cast returns `nullptr`, it means the type of the value is mismatched, and you should return nullptr.
   // Otherwise, return the value.
+  if (key.size() == 0)
+    return nullptr;
+  std::shared_ptr<TrieNode> p = root_;
+  for (auto k: key) {
+    if (p->children_.count(k) == 0)
+      return nullptr;
+    p = p->children_[k];
+  }
+  if (p == nullptr)
+    return nullptr;
+
+  std::shared_ptr<TrieNodeWithValue<T>> last = std::dynamic_pointer_cast<TrieNodeWithValue<T>>(p);
+  TrieNodeWithValue<T> *r = last.get();
+  return r->value_.get();
 }
 
 template <class T>
@@ -21,6 +35,24 @@ auto Trie::Put(std::string_view key, T value) const -> Trie {
 
   // You should walk through the trie and create new nodes if necessary. If the node corresponding to the key already
   // exists, you should create a new `TrieNodeWithValue`.
+
+  std::unique_ptr<Trie> new_trie = Clone();
+  Trie *res = new_trie.get();
+  if (key.size() == 0)
+    return *res;
+
+  std::shared_ptr<TrieNode> p = res->root_;
+  for (auto k: key) {
+    if (p->children_.count[k] == 0) {
+      p->children_[k] = std::shared_ptr<TrieNode>();
+    }
+    p = p->children_[k];
+  }
+  
+  std::shared_ptr<TrieNodeWithValue<T>> last = std::dynamic_pointer_cast<TrieNodeWithValue<T>>(p);
+  TrieNodeWithValue<T> *r = last.get();
+  r->value_ = std::move(value);
+  return *res;
 }
 
 auto Trie::Remove(std::string_view key) const -> Trie {
@@ -28,6 +60,28 @@ auto Trie::Remove(std::string_view key) const -> Trie {
 
   // You should walk through the trie and remove nodes if necessary. If the node doesn't contain a value any more,
   // you should convert it to `TrieNode`. If a node doesn't have children any more, you should remove it.
+
+  std::unique_ptr<Trie> new_trie = Clone();
+  Trie *res = new_trie.get();
+  if (key.size() == 0)
+    return *res;
+
+  std::shared_ptr<TrieNode> p = res->root_;
+  std::shared_ptr<TrieNode> pre;
+  for (auto k: key) {
+    if (p->children_.count[k] == 0) {
+      cout << "There is not the key.";
+      return *res;
+    }
+    pre = p;
+    p = p->children_[k];
+  }
+
+  std::shared_ptr<TrieNode> last = std::dynamic_pointer_cast<TrieNode>(p);
+  if (last->children_.size() == 0) {
+    pre->children_.erase(key.back());
+  }
+  return *res;
 }
 
 // Below are explicit instantiation of template functions.

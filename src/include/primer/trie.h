@@ -11,6 +11,7 @@
 #include <unordered_map>
 #include <utility>
 #include <vector>
+#include <iostream>
 
 namespace bustub {
 
@@ -108,6 +109,11 @@ class Trie {
  public:
   // Create an empty trie.
   Trie() = default;
+
+  // Clone the trie to create a new trie
+  auto Clone() const -> std::unique_ptr<Trie> {
+    return std::make_unique<Trie>(root_);
+  }
 
   // Get the value associated with the given key.
   // 1. If the key is not in the trie, return nullptr.
